@@ -18,15 +18,17 @@ const PurchaseForm = () => {
   const navigate = useNavigate();
   const [acumulator, setAcumulator] = useState(0);
   const [qtyCatch, SetQtyCatch] = useState(0);
-  const [totalValue,setTotalValue]=useState(0)
-  const cartItems = useSelector((products) => products.item);
+  const [totalValue,setTotalValue]=useState(0);
   const [dataUser, setDataUser] = useState({
     name: "",
     email: "",
     Adress: "",
     ZipCode: "",
   });
+  console.log('cartItem', cartItem);
 
+
+  const date = Date()
   const sendData = (e) => {
     e.preventDefault();
     if (
@@ -42,20 +44,20 @@ const PurchaseForm = () => {
       });
     } else {
       navigate("/PaymentMethod");
-      setUser({ ...user, dataForm: dataUser, ItemCart: cartItem ,totalValue:totalValue});
+      setUser({ ...user, dataForm: dataUser, ItemCart: cartItem ,totalValue: totalValue, date: date});
     }
   };
   useEffect(() => {
     let ActualQuantity = 0;
     let ActualPrice = 0;
-    cartItems.forEach((element) => {
+    cartItem.forEach((element) => {
       ActualQuantity += element.quantity;
-      ActualPrice += parseInt(element.item.price);
+      ActualPrice += parseInt(element.item.price * element.quantity);
     });
 
     setAcumulator(ActualPrice.toFixed(3));
     SetQtyCatch(ActualQuantity);
-    setTotalValue(ActualQuantity * ActualPrice)
+    setTotalValue( ActualPrice)
   }, []);
   const saveData = (e) => {
     setDataUser({ ...dataUser, [e.target.name]: e.target.value });
@@ -63,7 +65,7 @@ const PurchaseForm = () => {
   return (
     <div className="PurchaseForm">
       <Card className=" cards cardContainer">
-        <Card className="card">
+        <Card className="purchase-card">
           <Card.Body>
             <Card.Title className="card-title">Purchase Form</Card.Title>
             <Card.Text className="text row">
@@ -126,7 +128,7 @@ const PurchaseForm = () => {
                           <th>Cost</th>
                         </tr>
                       </thead>
-                      {cartItems.map((item) => (
+                      {cartItem.map((item) => (
                         <tbody>
                           <tr>
                             <td>
@@ -137,7 +139,7 @@ const PurchaseForm = () => {
                               </div>
                             </td>
                             <td>{item.quantity}</td>
-                            <td>${item.item.price}</td>
+                            <td>${item.item.price * item.quantity}</td>
                           </tr>
                         </tbody>
                       ))}
